@@ -19,7 +19,7 @@ A text-based role-playing game built in Python. The program manages player data,
 The project requires a standard **Python 3** installation.
 
 *   **Windows:** Install Python 3 via the Microsoft Store or directly from python.org.
-*   **macOS / Linux:** Install via terminal packet managers (`brew install python` or `sudo apt install python3`).
+*   **macOS / Linux:** Install via terminal packet managers (`brew install python` or `sudo apt install python3`(Debian based systems) `sudo pacman -S python3`(Arch based systems).
 
 ---
 
