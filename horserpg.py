@@ -16,6 +16,7 @@ def execute_save():
     "horse": look if "look" in globals() else "none",
     "mountains": ms if "ms" in globals() else "none",
     "stage": game_stage,
+    "horse_paid": horse_paid,
   }
   with open(SAVE_FILE, "w") as file:
     json.dump(save_data, file, indent=2)
@@ -23,7 +24,7 @@ def execute_save():
 
 
 def load_save():
-  global player_wallet, look, ms, game_stage
+  global player_wallet, look, ms, game_stage, horse_paid
 
   if not os.path.exists(SAVE_FILE):
     return False
@@ -35,6 +36,9 @@ def load_save():
     look = save_data.get("horse", "none")
     ms = save_data.get("mountains", "none")
     game_stage = save_data.get("stage")
+    horse_paid = save_data.get("horse_paid")
+    if horse_paid is None:
+      horse_paid = game_stage != "horse_selection" and look in ("joey", "hammer", "oldey")
     if game_stage is None:
       if ms in ("mc", "oc", "or"):
         game_stage = "cave"
@@ -84,6 +88,7 @@ price_hammer = "5000"
 price_joey = "2000"
 price_horseshoe = "100"
 game_stage = "horse_selection"
+horse_paid = False
 load_save()
 player_wallet
 
@@ -366,18 +371,20 @@ print("You: Let's get you some horseshoes, boy.")
 time.sleep(0.2)
 
 
-if look == "oldey":
+if not horse_paid:
+  if look == "oldey":
     print(f"{GREEN_BACK}WALLET: {int(player_wallet) - int(price_oldey) - int(price_horseshoe)}{RESET}")
     player_wallet = int(player_wallet) - int(price_oldey) - int(price_horseshoe)
-elif look == "hammer":
+  elif look == "hammer":
     print(f"{GREEN_BACK}WALLET: {int(player_wallet) - int(price_hammer) - int(price_horseshoe)}{RESET}")
     print("You are 100$ in debt!!")
     player_wallet = int(player_wallet) - int(price_hammer) - int(price_horseshoe)
-elif look == "joey":
+  elif look == "joey":
     print(f"{GREEN_BACK}WALLET: {int(player_wallet) - int(price_joey) - int(price_horseshoe)}{RESET}")
     player_wallet = int(player_wallet) - int(price_joey) - int(price_horseshoe)
-else: 
+  else:
     print("Invalid horse selection.")
+  horse_paid = True
 time.sleep(0.5)
 
 print("MAXIMIZE YOUR TERMINAL WINDOW FOR THE MAP TO BE DISPLAYED PROPERLY")
@@ -512,65 +519,74 @@ elif look == "oldey":
 
 next = read_command("What would you like to do next? (1, 2, or 3) ")
 time.sleep(1.0)
-
-if next == "1" and look == "joey":
-  print("You decide to make money to pay off your debt.")
-  print(f"You made {GREEN}{int(random_money)}{RESET} dollars!")
-  player_wallet += int(random_money)
-  print(f"{GREEN_BACK}WALLET: {player_wallet}{RESET}")
-  time.sleep(1.0)
-elif next == "1" and look == "hammer":
-  print("You decide to make money to pay off your debt.")
-  print(f"You made {GREEN}{int(random_money)}{RESET} dollars!")
-  player_wallet += int(random_money)
-  print(f"{GREEN_BACK}WALLET: {player_wallet}{RESET}")
-  time.sleep(1.0)
-elif next == "1" and look == "oldey":
-  print("You decide to make money to pay off your debt.")
-  print(f"You made {GREEN}{int(random_money)}{RESET} dollars!")
-  player_wallet += int(random_money)
-  print(f"{GREEN_BACK}WALLET: {player_wallet}{RESET}")
-  time.sleep(1.0)
-elif next == "2" and look != "oldey":
-  print("You decide to train your horse to be faster.")
-  if look == "hammer":
+while True:
+  if next == "1" and look == "joey":
+    print("You decide to make money to pay off your debt.")
+    print(f"You made {GREEN}{int(random_money)}{RESET} dollars!")
+    player_wallet += int(random_money)
+    print(f"{GREEN_BACK}WALLET: {player_wallet}{RESET}")
+    time.sleep(1.0)
+    break
+  elif next == "1" and look == "hammer":
+    print("You decide to make money to pay off your debt.")
+    print(f"You made {GREEN}{int(random_money)}{RESET} dollars!")
+    player_wallet += int(random_money)
+    print(f"{GREEN_BACK}WALLET: {player_wallet}{RESET}")
+    time.sleep(1.0)
+    break
+  elif next == "1" and look == "oldey":
+    print("You decide to make money to pay off your debt.")
+    print(f"You made {GREEN}{int(random_money)}{RESET} dollars!")
+    player_wallet += int(random_money)
+    print(f"{GREEN_BACK}WALLET: {player_wallet}{RESET}")
+    time.sleep(1.0)
+    break
+  elif next == "2" and look != "oldey":
+    print("You decide to train your horse to be faster.")
+    if look == "hammer":
+      print(f"{BLUE}Hammer's speed: [••••-----]{RESET}")
+      time.sleep(0.5)
+      print("You trained Hammer and his speed increased!")
+      print(f"{BLUE}Hammer's speed: [•••••---]{RESET}")
+      break
+    elif look == "joey":
+      print(f"{BLUE}Joey's speed: [••-------]{RESET}")
+      time.sleep(0.5)
+      print("You trained Joey and his speed increased!")
+      print(f"{BLUE}Joey's speed: [•••------]{RESET}")
+      time.sleep(1.0)
+      break
+  elif next == "2" and look == "hammer":
     print(f"{BLUE}Hammer's speed: [••••-----]{RESET}")
     time.sleep(0.5)
     print("You trained Hammer and his speed increased!")
     print(f"{BLUE}Hammer's speed: [•••••---]{RESET}")
-  elif look == "joey":
+    time.sleep(1.0)
+    break
+  elif next == "2" and look == "joey":
     print(f"{BLUE}Joey's speed: [••-------]{RESET}")
     time.sleep(0.5)
     print("You trained Joey and his speed increased!")
     print(f"{BLUE}Joey's speed: [•••------]{RESET}")
-  time.sleep(1.0)
-elif next == "2" and look == "hammer":
-  print(f"{BLUE}Hammer's speed: [••••-----]{RESET}")
-  time.sleep(0.5)
-  print("You trained Hammer and his speed increased!")
-  print(f"{BLUE}Hammer's speed: [•••••---]{RESET}")
-  time.sleep(1.0)
-elif next == "2" and look == "joey":
-  print(f"{BLUE}Joey's speed: [••-------]{RESET}")
-  time.sleep(0.5)
-  print("You trained Joey and his speed increased!")
-  print(f"{BLUE}Joey's speed: [•••------]{RESET}")
-  time.sleep(1.0)
-elif next == "2" and look == "oldey":
-  print(f"{BLUE}Oldey's speed: [---------]{RESET}")
-  time.sleep(0.5)
-  print("You trained Oldey and his speed increased!")
-  print(f"{BLUE}Oldey's speed: [•--------]{RESET}")
-  time.sleep(1.0)
-elif next == "3":
-  print("You decide to explore the mountains.")
-  time.sleep(1.0)
-  print("You find a hidden path that leads to a beautiful waterfall.")
-  time.sleep(1.0)
-  print("You take a moment to enjoy the scenery and relax.")
-  time.sleep(1.0)
-else:
-  print("Invalid choice. Please select 1, 2, or 3.")
-
+    time.sleep(1.0)
+    break
+  elif next == "2" and look == "oldey":
+    print(f"{BLUE}Oldey's speed: [---------]{RESET}")
+    time.sleep(0.5)
+    print("You trained Oldey and his speed increased!")
+    print(f"{BLUE}Oldey's speed: [•--------]{RESET}")
+    time.sleep(1.0)
+    break
+  elif next == "3":
+    print("You decide to explore the mountains.")
+    time.sleep(1.0)
+    print("You find a hidden path that leads to a beautiful waterfall.")
+    time.sleep(1.0)
+    print("You take a moment to enjoy the scenery and relax.")
+    time.sleep(1.0)
+    break
+  else:
+    print("Invalid choice. Please select 1, 2, or 3.")
+    continue
 
 
